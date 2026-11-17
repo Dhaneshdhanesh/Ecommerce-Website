@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    {% extends 'base.html' %}
+
+{% block content %}
+
+<h2>Manage Buyer Orders</h2>
+
+{% for order in orders %}
+
+<div class="card shadow p-3 mb-4">
+
+    <h5>Order ID: {{ order.id }}</h5>
+
+    <p>Buyer: {{ order.user.username }}</p>
+
+    <p>Email: {{ order.user.email }}</p>
+
+    <p>Phone: {{ order.phone }}</p>
+
+    <p>Address: {{ order.address }}</p>
+
+    <p>Total: ₹{{ order.total_amount }}</p>
+
+    <p>Status: {{ order.get_status_display }}</p>
+
+    <h6>Ordered Products</h6>
+
+    {% for item in order.items.all %}
+
+        <p>
+            {{ item.product.name }}
+            - Quantity: {{ item.quantity }}
+            - Price: ₹{{ item.price }}
+        </p>
+
+    {% endfor %}
+
+    {% if order.status != 'CANCELLED' and order.status != 'DELIVERED' %}
+
+        <form method="POST"
+              action="{% url 'update_order_status' order.id %}">
+
+            {% csrf_token %}
+
+            <select name="status" class="form-select mb-2">
+
+                <option value="CONFIRMED">Confirmed</option>
+
+                <option value="SHIPPED">Shipped</option>
+
+                <option value="DELIVERED">Delivered</option>
+
+            </select>
+
+            <button class="btn btn-primary">
+                Update Status
+            </button>
+
+        </form>
+
+    {% endif %}
+
+</div>
+
+{% empty %}
+
+<p>No orders available.</p>
+
+{% endfor %}
+
+{% endblock %}
+</body>
+</html>

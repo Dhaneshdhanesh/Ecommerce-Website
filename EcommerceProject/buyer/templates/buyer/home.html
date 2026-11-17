@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    {% extends 'base.html' %}
+
+{% block content %}
+
+<h2>Welcome to Our Store</h2>
+
+<form method="GET" class="mb-4">
+
+    <input type="text"
+           name="search"
+           placeholder="Search products..."
+           class="form-control"
+           style="max-width:400px; display:inline">
+
+    <button class="btn btn-primary">
+        Search
+    </button>
+
+</form>
+
+<div class="row">
+
+    {% for product in products %}
+
+    <div class="col-md-4 mb-4">
+
+        <div class="card shadow h-100">
+
+            {% if product.image %}
+
+                <img src="{{ product.image.url }}"
+                     class="card-img-top"
+                     style="height:220px; object-fit:cover">
+
+            {% endif %}
+
+            <div class="card-body">
+
+                <h5>{{ product.name }}</h5>
+
+                <p>{{ product.description }}</p>
+
+                <h5>₹{{ product.price }}</h5>
+
+                <p>Stock: {{ product.stock }}</p>
+
+                <form method="POST"
+                      action="{% url 'add_to_cart' product.id %}">
+
+                    {% csrf_token %}
+
+                    <button class="btn btn-primary w-100">
+                        Add to Cart
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    {% empty %}
+
+    <p>No products available.</p>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}
+</body>
+</html>
